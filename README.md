@@ -5,8 +5,9 @@ Multi-container Docker app built from the following services:
 * [InfluxDB](https://github.com/influxdata/influxdb) - time series database
 * [Chronograf](https://github.com/influxdata/chronograf) - admin UI for InfluxDB
 * [Grafana](https://github.com/grafana/grafana) - visualization UI for InfluxDB
+* [Telegraf](https://github.com/influxdata/telegraf) - agent for collecting metrics from the local machine
 
-Useful for quickly setting up a monitoring stack for performance testing. Combine with [serverless-artillery](https://github.com/Nordstrom/serverless-artillery) and [artillery-plugin-influxdb](https://github.com/Nordstrom/artillery-plugin-influxdb) to create a performance testing environment in minutes.
+Useful for quickly setting up a monitoring stack for performance testing. 
 
 ## Quick Start
 
@@ -74,6 +75,11 @@ To provision additional data sources, see the Grafana [documentation](http://doc
 
 ## Dashboards
 
-By default, the app does not create any Grafana dashboards. An example dashboard that's configured to work with [artillery-plugin-influxdb](https://github.com/Nordstrom/artillery-plugin-influxdb) is located at `./grafana-provisioning/dashboards/artillery.json.example`. To use this dashboard, rename it to `artillery.json`.
+By default, the app does not create any Grafana dashboards. 
 
 To provision additional dashboards, see the Grafana [documentation](http://docs.grafana.org/administration/provisioning/#dashboards) and add a config file to `./grafana-provisioning/dashboards/` before starting the app.
+
+## Export data to csv
+```Bash
+curl -H "Accept: application/csv" -G "localhost:8086/query"  --data-urlencode "db=db0" -u token:INFLUXDB_PASSWORD --data-urlencode "q=select * from <measurement> where time >= now() - 1d" > "$(date +"%Y_%m_%d_%H_%M_%S").csv"
+```
